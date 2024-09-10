@@ -1,0 +1,128 @@
+# PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+
+class Passenger:
+  def __init__(self, attributes):
+    self.__Id = attributes[0]
+    self.__Survived = attributes[1] == '1' # converts to boolean
+    self.__Pclass = attributes[2]
+    self.__Surname = attributes[3].strip('"()')
+    self.__FormalTitle = attributes[4].strip('" ')
+    self.__Sex = attributes[5]
+    if attributes[6].strip():  # Checks if the stripped Age is not empty
+      self.__Age = float(attributes[6]) 
+    else:
+      self.__Age = -1
+    self.__SibSp = attributes[7]
+    self.__Parch = attributes[8]
+    self.__Ticket = attributes[9]
+    self.__Fare = attributes[10]
+    self.__Cabin = attributes[11]
+    self.__Embarked = attributes[12]
+
+  # get each of the privatised data
+  def getId(self):
+    return self.__Id
+
+  def getSurvived(self):
+    return self.__Survived
+
+  def getPclass(self):
+    return self.__Pclass
+
+  def getSurname(self):
+    return self.__Surname
+
+  def getFormalTitle(self):
+    return self.__FormalTitle
+
+  def getSex(self):
+    return self.__Sex
+
+  def getAge(self):
+    return self.__Age
+
+  def getSibSp(self):
+    return self.__SibSp
+
+  def getParch(self):
+    return self.__Parch
+
+  def getTicket(self):
+    return self.__Ticket
+
+  def getFare(self):
+    return self.__Fare
+
+  def getCabin(self):
+    return self.__Cabin
+
+  def getEmbarked(self):
+    return self.__Embarked
+
+# file handling
+file = open("titanicReal.txt","r")
+data = file.read().splitlines()
+file.close()
+
+passengers = []
+for line in data:
+    attributes = line.split(",")
+    passenger = Passenger(attributes)
+    passengers.append(passenger)
+  
+def count_survivors_by_class_and_gender():
+  # Initialise counts
+  survivors = {1: {'female': 0, 'male': 0, 'children': 0},2: {'female': 0, 'male': 0, 'children': 0},
+               3: {'female': 0, 'male': 0, 'children': 0}}
+  total_passengers = {1: {'female': 0, 'male': 0, 'children': 0},2: {'female': 0, 'male': 0, 'children': 0},
+    3: {'female': 0, 'male': 0, 'children': 0}}
+
+# Count survivors and total passengers
+  for passenger in passengers:
+      pclass = int(passenger.getPclass())
+      survived = passenger.getSurvived()
+      sex = passenger.getSex()
+      age = passenger.getAge()
+  
+      if age < 18:
+          total_passengers[pclass]['children'] = total_passengers[pclass]['children'] + 1
+          if survived:
+              survivors[pclass]['children'] = survivors[pclass]['children'] + 1
+      elif sex == 'female':
+          total_passengers[pclass]['female'] = total_passengers[pclass]['female'] + 1
+          if survived:
+              survivors[pclass]['female'] = survivors[pclass]['female'] + 1
+      elif sex == 'male':
+          total_passengers[pclass]['male'] = total_passengers[pclass]['male'] + 1
+          if survived:
+              survivors[pclass]['male'] = survivors[pclass]['male'] + 1
+  
+  return survivors, total_passengers
+
+survivor_counts, total_counts = count_survivors_by_class_and_gender()
+
+for pclass in range(1, 4):
+  print("Class " + str(pclass) + ":")
+  for category in ['female', 'male', 'children']:
+      survivors = survivor_counts[pclass][category]
+      total = total_counts[pclass][category]
+      print("  " + category + " survivors: " + str(survivors) + "/" + str(total))
+
+
+
+  
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+    
+
